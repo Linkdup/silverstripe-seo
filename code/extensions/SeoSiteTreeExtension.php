@@ -26,10 +26,27 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
      */
 	private static $use_webmaster_tag = true;
 
-	private static $db = array(
-		'SEOPageSubject' => 'Varchar(256)'
-	);  
-
+    /**
+     * Database fields
+     *
+     * @config
+	 * @var array
+     **/
+    private static $db = [
+        'MetaTitle' => 'Varchar(255)',
+        'SEOPageSubject' => 'Varchar(255)',
+        'SEOPageScore' => 'Int'
+    ];	
+	
+    /**
+     * Database has one relationships
+     *
+     * @config
+	 * @var array 
+     **/
+    private static $has_one = [
+        'SEOImage' => 'Image'
+    ];	
 
 	public $score_criteria = array(
 		'pagesubject_defined' => false,
