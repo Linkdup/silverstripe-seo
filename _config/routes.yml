@@ -1,0 +1,9 @@
+---
+Name: seo_routes
+After:
+  - 'adminroutes/*'
+---
+Director:
+  rules:
+    'admin/seo//$Action': 'SeoController'
+    

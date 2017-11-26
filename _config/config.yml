@@ -1,14 +1,47 @@
 ---
-Name: 'seoextensions'
+Name: seo_config
+After:
+  - 'framework/*'
+  - 'cms/*'
 ---
+
+# Include required CSS and Javascript
+LeftAndMain:
+  extra_requirements_css:
+    - seo/css/seo.css
+  extra_requirements_javascript:
+    - seo/javascript/seo.js
+
+# Add SEO extension to the site tree class
+SiteTree:
+  extensions:
+     - SeoSiteTreeExtension
+
+# Models managed in SEO admin area in CMS
+SeoModelAdmin:
+  models:
+    - Page
+    
+# Exclude items from site tree
+SeoSiteTreeExtension:
+  excluded_page_types:
+    - ErrorPage
+    - RedirectorPage
+    - VirtualPage
+
+# SEO Class Extensions
 Page:
   extensions:
     - SeoSiteTreeExtension
+
 SiteConfig:
   extensions:
     - SeoSiteConfigExtension
-# Example of how to exclude extra page types from showing the SEO tab:
-# SeoObjectExtension:
-#   excluded_page_types:
-#     - 'SomePage'
 
+# Enable Google Sitemap notifications    
+---
+Only:
+  moduleexists: 'googlesitemaps'
+---
+GoogleSitemap:
+  google_notification_enabled: true  

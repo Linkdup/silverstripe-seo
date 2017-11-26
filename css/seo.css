@@ -1,92 +1,65 @@
-#google_search_snippet {
-	font-family: arial,sans-serif;
-	width: 528px;
-	background-color: #fff;
-	padding: 4px 16px;
-	margin-bottom: 16px;
+.seo-preview-container {
+	background-color: #FFF;
+	padding: 20px;
+	border: 1px solid #D2D5D8;
 }
 
-#google_search_snippet h3 {
-	font-style: normal;
-	font-weight: bold;
-	color: #1122CC;
-	cursor: pointer;
-	white-space: nowrap;
-	font-size: medium;
-	font-family: arial,sans-serif;
-	text-decoration: underline;
-	margin-bottom: 4px;
-	overflow: hidden;
+.seo-title {
+	color: #1a0dab;
+	font-size: 18px;
+	font-family: arial, sans-serif;
+	font-weight: 400;
+	line-height: 21.6px;
 }
 
-#google_search_snippet div.google_search_url {
-	font-size: 14px !important;
-	display: inline-block;
-	color: #009933;
-	font-style: normal;
-	white-space: nowrap;
-	font-family: arial,sans-serif;
-	font-size: small;
+.seo-link {
+	color: #006621;
+	font-size: 14px;
+	font-family: arial, sans-serif;
 	font-weight: normal;
+	line-height: 16px;
 }
 
-/* hidden literal field for site title */
-#ss_siteconfig_title {
-	display: none;
+.seo-description {
+	color: #545454;
+	font-size: 13px;
+	font-family: arial, sans-serif;
+	font-weight: 400;
+	line-height: 18.2px;
+	word-wrap: break-word;
 }
 
-#Root_SEO div#Options ul.ui-tabs-nav {
-	float: left;
+.seo-tips-list {
+	background-color: #FFF;
+	padding: 10px;
+	border: 1px solid #D2D5D8;
 }
 
-
-/* five-star css */
-div#fivestar-widget {
-	display: block;
-	clear: both;
-}
-div#fivestar-widget div.star {
-	float: left;
-	height: 15px;
-	overflow: hidden;
-	width: 17px;
-	text-indent: -999em;
-	background: url("../images/star.png") no-repeat scroll 0 0 transparent;
-	text-decoration: none;    
-}
-div#fivestar-widget div.on {
-	background-position: 0 -16px;
+.seo-tips-list li {
+	padding: 4px 0;
+	border-bottom: 1px solid #D2D5D8;
 }
 
-div#fivestar-widget div.on-half {
-	background-position: 0 -32px;
+.seo-tips-list li:last-child {
+	border-bottom: none;
 }
 
-
-h5.seo_score {
-	margin-bottom: 4px;
-	margin-top: 4px;
-}
-div.score_clear {
-	clear: both;
-	height: 10px;
-}
-
-ul#seo_score_tips {
-	list-style: circle;
-	margin: 14px;
-}
-ul#seo_score_tips li {
-	color: #f00;
-	margin-bottom: 4px;
-}
-
-
-.simple_pagesubject_yes {
-	font-weight: bold;
+.score-excellent {
 	color: green;
 }
-.simple_pagesubject_no {
-	font-weight: bold;
+
+.score-good {
+	color: #F46B00;
+}
+
+.score-bad {
 	color: red;
+}
+
+#seo_page_subject li {
+	color: red;
+}
+
+#seo_page_subject li.checked {
+	color: green;
 }

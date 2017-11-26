@@ -1,10 +1,13 @@
 <?php
 
 /**
- * SeoSiteConfig
- * adds site-wide settings for SEO
+ * Seo site config extension
+ * 
+ * SeoSiteConfigExtension adds site-wide settings for SEO
+ * 
+ * @package seo
  */
-class SeoSiteConfig extends DataExtension
+class SeoSiteConfigExtension extends DataExtension
 {
     private static $db = array(
         'GoogleWebmasterMetaTag' => 'Varchar(512)'
