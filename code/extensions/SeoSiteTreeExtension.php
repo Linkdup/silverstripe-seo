@@ -1,10 +1,10 @@
 <?php
 /**
- * SeoObjectExtension extends SiteTree with functionality for helping content authors to 
+ * SeoSiteTreeExtension extends SiteTree with functionality for helping content authors to 
  * write good content for search engines, it uses the added var SEOPageSubject around
  * which the SEO score for the page is determined
  */
-class SeoObjectExtension extends SiteTreeExtension {
+class SeoSiteTreeExtension extends SiteTreeExtension {
 
 	/**
 	 * Specify page types that will not include the SEO tab
