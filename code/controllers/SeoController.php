@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Seo controller
+ * 
+ * SeoController add the ability to get the SEO score for a page using AJAX
+ * 
+ * @package seo
+ */
 class SeoController extends Controller {
 	
 	/**
