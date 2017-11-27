@@ -21,7 +21,7 @@ class SeoSiteConfigExtension extends DataExtension
      */
     public function updateCMSFields(FieldList $fields)
     {
-        if (Config::inst()->get('SeoObjectExtension', 'use_webmaster_tag')) {
+        if (Config::inst()->get('SeoSiteTreeExtension', 'use_webmaster_tag')) {
             $fields->addFieldToTab(
                 "Root.SEO",
                 TextareaField::create(
