@@ -54,7 +54,7 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 	 * @var array 
      **/
     private static $has_one = [
-        'SEOImage' => 'Image'
+        'SocialMediaShareImage' => 'Image'
     ];
 	
 	/**
@@ -91,6 +91,7 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
         $fields->addFieldToTab("Root.SEO", new TabSet('Options'));
         $fields->findOrMakeTab('Root.SEO.Options.Tips', _t('SEO.Tips', 'Tips'));
         $fields->findOrMakeTab('Root.SEO.Options.Meta', _t('SEO.Meta', 'Meta'));
+		$fields->findOrMakeTab('Root.SEO.Options.SocialMedia', _t('SEO.SocialMedia', 'Social Media'));
         $fields->findOrMakeTab('Root.SEO.Options.Preview', _t('SEO.Preview', 'Preview'));
 		
 		// Add tips field
@@ -103,8 +104,14 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 		
 		// Add SEO meta fields
 		$fields->addFieldsToTab('Root.SEO.Options.Meta', array(
-			TextField::create("MetaTitle", _t('SEO.SeoScore', 'Meta Title')),
-			TextareaField::create("MetaDescription",  _t('SEO.SeoScore', 'Meta Description'))
+			TextField::create("MetaTitle", _t('SEO.MetaTitle', 'Meta Title')),
+			TextareaField::create("MetaDescription",  _t('SEO.MetaDescription', 'Meta Description'))
+		));
+		
+		// Add SEO meta fields
+		$fields->addFieldsToTab('Root.SEO.Options.SocialMedia', array(
+			UploadField::create("SocialMediaShareImage", _t('SEO.SocialMediaShareImage', 'Social Media Default Image'))
+			->setDescription(_t('SEO.SocialMediaShareImageDescription', 'Images size 1200 x 675'))
 		));
 		
 		// Add preview fields

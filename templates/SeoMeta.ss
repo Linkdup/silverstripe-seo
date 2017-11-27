@@ -6,13 +6,13 @@
 <% if $MetaDescription %><meta property="og:description" content="$MetaDescription.XML"/><% end_if %>
 <meta property="og:url" content="$AbsoluteLink"/>
 <meta property="og:site_name" content="$SiteConfig.Title - $SiteConfig.Tagline"/>
-<% if $SEOImage %><meta property="og:image" content="$SEOImage.croppedImage(1200,630).AbsoluteLink" /><% end_if %>
+<% if $SocialMediaShareImage %><meta property="og:image" content="$SocialMediaShareImage.croppedImage(1200,630).AbsoluteLink" /><% end_if %>
 
 <meta name="twitter:title" content="<% if $MetaTitle %>$MetaTitle.XML<% else %>$Title<% end_if %>" />
 <% if $MetaDescription %><meta name="twitter:description" content="$MetaDescription.XML" /><% end_if %>
-<% if $SEOImage %>
+<% if $SocialMediaShareImage %>
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="$SEOImage.croppedImage(1200,675).AbsoluteLink">
+<meta name="twitter:image" content="$SocialMediaShareImage.croppedImage(1200,675).AbsoluteLink">
 <% end_if %>
 <meta name="twitter:site" content="$TwitterSite" />
 <meta name="twitter:creator" content="$TwitterCreator" />
