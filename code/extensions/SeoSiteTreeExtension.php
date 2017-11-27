@@ -146,8 +146,11 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 		if (empty($html)) {
 			return null;
 		} else {
-			$dom = new DOMDocument();
-			@$dom->loadHTML($html);
+			libxml_use_internal_errors(true);
+			$dom = new DOMDocument;
+			$dom->loadHTML($html);
+			libxml_clear_errors();
+			libxml_use_internal_errors(false);
 			return $dom;
 		}
 	}
