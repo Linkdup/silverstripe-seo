@@ -89,6 +89,7 @@ class SeoModelAdmin extends ModelAdmin {
 		$config->removeComponentsByType('GridFieldDeleteAction');
 		$config->removeComponentsByType( "GridFieldPrintButton" );
 		$config->removeComponentsByType( "GridFieldExportButton" );
+		$config->removeComponentsByType( "GridFieldEditButton" );
 		
 		// Specify the fields to display
 		$dataColumns = $config->getComponentByType('GridFieldDataColumns');
