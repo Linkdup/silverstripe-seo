@@ -79,7 +79,6 @@ class SeoModelAdmin extends ModelAdmin {
     public function getEditForm($id = null, $fields = null)
     {
         $form = parent::getEditForm($id, $fields);
-
         $class = new $this->modelClass;
 		
 		// Update the grid
@@ -87,9 +86,9 @@ class SeoModelAdmin extends ModelAdmin {
 		$config = $grid->getConfig();
         $config->removeComponentsByType('GridFieldAddNewButton');
 		$config->removeComponentsByType('GridFieldDeleteAction');
-		$config->removeComponentsByType( "GridFieldPrintButton" );
-		$config->removeComponentsByType( "GridFieldExportButton" );
-		$config->removeComponentsByType( "GridFieldEditButton" );
+		$config->removeComponentsByType('GridFieldPrintButton');
+		$config->removeComponentsByType('GridFieldExportButton');
+		$config->removeComponentsByType('GridFieldEditButton');
 		
 		// Specify the fields to display
 		$dataColumns = $config->getComponentByType('GridFieldDataColumns');
@@ -98,6 +97,15 @@ class SeoModelAdmin extends ModelAdmin {
 			'URLSegment'=> 'URL',
 			'SEOPageSubject' => 'SEO Page Subject',
 			'SEOPageScore' => 'SEO Score'
+		));
+		
+		// Add link to title
+		$dataColumns->setFieldFormatting(array(
+			"Title" => function($value, $item) {
+				$url = "/admin/pages/edit/show/" . $item->ID;
+				$link = '<a href="' . $url . '" class="cms-panel-link action external-link">' . $item->Title . '</a>';
+				return $link;
+			}
 		));
 
         $this->extend('updateEditForm',  $grid);
