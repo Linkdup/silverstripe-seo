@@ -60,7 +60,8 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 	/**
 	 * Save the SEO page score on write
 	 */
-	public function onBeforeWrite() {
+	public function onBeforeWrite() 
+	{
 		parent::onBeforeWrite();
 		$pageSeoValidation = $this->getSeoValidator();
 		if($pageSeoValidation) {
@@ -118,12 +119,23 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 	}
 	
 	/**
+	 * Update the Meta Tag with Seo Meta Tags
+	 * 
+	 * @param HTMLText $tags
+	 */
+    public function MetaTags(& $tags)
+    {
+        $tags .= $this->owner->renderWith('SeoMeta');
+    }
+	
+	/**
 	 * Create DOM from HTML
 	 *
 	 * @param HTMLText $html String
 	 * @return DOMDocument Object
 	 */
-	private function createDOMDocumentFromHTML($html) {
+	private function createDOMDocumentFromHTML($html) 
+	{
 		if (empty($html)) {
 			return null;
 		} else {
@@ -138,7 +150,8 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 	 * 
 	 * @return SeoValidator
 	 */
-	public function getSeoValidator() {
+	public function getSeoValidator() 
+	{
 		if($this->pageSeoValidator === null) {
 			// Set the default content
 			$html = $this->getSeoHTML();
@@ -170,7 +183,8 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 	*  (we use the same info as gets back from $Layout in template)
 	*
 	*/
-	public function getSeoHTML() {
+	public function getSeoHTML() 
+	{
 		Config::inst()->update('SSViewer', 'theme_enabled', true);
 		$rendered_layout = $this->renderLayout();
 		Config::inst()->update('SSViewer', 'theme_enabled', false);
@@ -182,7 +196,8 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 	 * 
 	 * @return HTMLText
 	 */
-	public function renderLayout() {
+	public function renderLayout() 
+	{
 		$template = $this->getLayoutTemplate();
 		$subtemplateViewer = new SSViewer($template);
 		$subtemplateViewer->includeRequirements(false);
@@ -195,7 +210,8 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 	 * @throws Exception
 	 * @return string
 	 */
-	protected function getLayoutTemplate() {
+	protected function getLayoutTemplate() 
+	{
 		$theme = Config::inst()->get('SSViewer', 'theme');
 		$templateList = array();
 		$parentClass = $this->getOwner()->class;
