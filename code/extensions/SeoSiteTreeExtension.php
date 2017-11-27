@@ -9,6 +9,13 @@
  * @package seo
  */
 class SeoSiteTreeExtension extends SiteTreeExtension {
+	
+	/**
+	 * Page SEO Validator
+	 * 
+	 * @var SeoValidator 
+	 */
+	protected $pageSeoValidator = null;
 
 	/**
 	 * Specify page types that will not include the SEO tab
@@ -31,6 +38,16 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
     ];	
 	
     /**
+     * Database default fields
+     *
+     * @config
+	 * @var array
+     **/
+    private static $defaults = [
+        'SEOPageScore' => 0
+    ];
+	
+    /**
      * Database has one relationships
      *
      * @config
@@ -39,6 +56,17 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
     private static $has_one = [
         'SEOImage' => 'Image'
     ];
+	
+	/**
+	 * Save the SEO page score on write
+	 */
+	public function onBeforeWrite() {
+		parent::onBeforeWrite();
+		$pageSeoValidation = $this->getSeoValidator();
+		if($pageSeoValidation) {
+			$this->owner->SEOPageScore = $pageSeoValidation->getScore();
+		}
+	}
 
 	/**
 	 * Update the CMS with SEO fields
@@ -87,20 +115,22 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 			)
 		));
 		
-	}	
+	}
 	
 	/**
-	 * Get first paragraph from content
-	 * 
-	 * @param DOMDocument $dom
-	 * @return string
+	 * Create DOM from HTML
+	 *
+	 * @param HTMLText $html String
+	 * @return DOMDocument Object
 	 */
-	protected function getFirstParagrahFromContent($dom) {
-		$firstParagraphObject = $dom->getElementsByTagName('p')->item(0);
-		if($firstParagraphObject) {
-			return $firstParagraphObject->nodeValue;
+	private function createDOMDocumentFromHTML($html) {
+		if (empty($html)) {
+			return null;
+		} else {
+			$dom = new DOMDocument();
+			@$dom->loadHTML($html);
+			return $dom;
 		}
-		return "";
 	}
 	
 	/**
@@ -109,69 +139,75 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 	 * @return SeoValidator
 	 */
 	public function getSeoValidator() {
-		$seoValidator = SeoValidator::create();
+		if($this->pageSeoValidator === null) {
+			// Set the default content
+			$html = $this->getSeoHTML();
 
-		// Create DOM object for more complicated rules that needs to evaluate
-		// objects in the DOM.
-		$dom = new DOMDocument();
-		@$dom->loadHTML($this->owner->Content);
-		
-		// Get the first paragraph
-		$firstParagraph = $this->getFirstParagrahFromContent($dom);
+			// Create the validator
+			$this->pageSeoValidator = SeoValidator::create(
+				$this->owner, 
+				$this->createDOMDocumentFromHTML($html )
+			);
 
-		// Add rules	
-		$seoValidator->addRule(SeoValidatorRuleTextLength::create(
-			"Page subject is not defined for page.",
-			$this->owner->SEOPageSubject, 
-			SeoValidatorRuleTextLength::OPERATOR_GREAT_THAN, 
-			0
-		));		
-		$seoValidator->addRule(SeoValidatorRuleContainsAllWords::create(
-			"Page subject is not in the title of this page",
-			$this->owner->SEOPageSubject, 
-			$this->owner->Title
-		));
-		$seoValidator->addRule(SeoValidatorRuleContainsAllWords::create(
-			"Page subject is not present in the first paragraph of the content of this page",
-			$this->owner->SEOPageSubject, 
-			$firstParagraph
-		));
-		$seoValidator->addRule(SeoValidatorRuleContainsAllWords::create(
-			"Page subject is not present in the URL of this page",
-			$this->owner->SEOPageSubject, 
-			$this->owner->Link()
-		));		
-		$seoValidator->addRule(SeoValidatorRuleContainsAllWords::create(
-			"Page subject is not present in the meta title of the page",
-			$this->owner->SEOPageSubject, 
-			$this->owner->MetaTitle
-		));	
-		$seoValidator->addRule(SeoValidatorRuleContainsAllWords::create(
-			"Page subject is not present in the meta description of the page",
-			$this->owner->SEOPageSubject, 
-			$this->owner->MetaDescription
-		));
-		$seoValidator->addRule(SeoValidatorRuleTextLength::create(
-			"The title of the page is not long enough and should have a length of at least 40 characters.",
-			$this->owner->Title, 
-			SeoValidatorRuleTextLength::OPERATOR_GREAT_THAN_OR_EQUAL, 
-			40
-		));
-		$seoValidator->addRule(SeoValidatorRuleTextLength::create(
-			"The content of this page is too short and does not have enough words. Please create content of at least 300 words based on the Page subject.",
-			$this->owner->Content, 
-			SeoValidatorRuleTextLength::OPERATOR_GREAT_THAN_OR_EQUAL, 
-			300
-		));
-		
-		$seoValidator->addRule(SeoValidatorRuleAltTitleInImages::create(
-			$dom
-		));
+			// Get the rules for the page
+			$rules = $this->owner->config()->get("seo_rules");	
+			foreach($rules as $rule) {
+				$this->pageSeoValidator->addRule($rule::create());
+			}
 
-		// Valiate the rules
-		$seoValidator->validate();
-		
-		return $seoValidator;
+			// Valiate the rules
+			$this->pageSeoValidator->validate();
+		}
+
+		return $this->pageSeoValidator;
+	}
+	
+	/*
+	*  Get Page Content from theme
+	* 
+	*  getPageContent
+	*  function to get html content of page which SEO score is based on
+	*  (we use the same info as gets back from $Layout in template)
+	*
+	*/
+	public function getSeoHTML() {
+		Config::inst()->update('SSViewer', 'theme_enabled', true);
+		$rendered_layout = $this->renderLayout();
+		Config::inst()->update('SSViewer', 'theme_enabled', false);
+		return $rendered_layout;
+	}
+	
+	/**
+	 *  Mimics the behaviour of $Layout in templates
+	 * 
+	 * @return HTMLText
+	 */
+	public function renderLayout() {
+		$template = $this->getLayoutTemplate();
+		$subtemplateViewer = new SSViewer($template);
+		$subtemplateViewer->includeRequirements(false);
+		return $subtemplateViewer->process($this->getOwner());
+	}
+	
+	/**
+	 * Find the appropriate "$Layout" template for this class
+	 * 
+	 * @throws Exception
+	 * @return string
+	 */
+	protected function getLayoutTemplate() {
+		$theme = Config::inst()->get('SSViewer', 'theme');
+		$templateList = array();
+		$parentClass = $this->getOwner()->class;
+		while($parentClass !== 'SiteTree') {
+			$templateList[] = $parentClass;
+			$parentClass = get_parent_class($parentClass);
+		}
+		$templates = SS_TemplateLoader::instance()->findTemplates($templateList, $theme);
+		if( ! isset($templates['Layout'])) {
+			throw new Exception('No layout found for class: ' . get_class($this->getOwner()));
+		}
+		return $templates['Layout'];
 	}
 	
 }

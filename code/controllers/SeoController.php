@@ -32,7 +32,7 @@ class SeoController extends Controller {
 			$page = Page::get()->byID($pageID);
 
 			// Update the fields required for SEO validator, we need to inject
-			// the content from the frontend.
+			// the content from the front-end.
 			$page->Title = $content["Title"];
 			$page->SEOPageSubject = $content["SEOPageSubject"];
 			$page->MetaTitle = $content["MetaTitle"];

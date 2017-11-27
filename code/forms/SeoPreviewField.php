@@ -52,6 +52,7 @@ class SeoPreviewField extends LiteralField {
 	public function getContent()
 	{
 		return Controller::curr()->customise(array(
+			"Title" =>  _t('SEO.SeoScore', 'Google Search preview'),
 			"SeoTitle" => $this->getSeoTitle(),
 			"SeoDescription" => $this->getSeoDescription(),
 			"SeoLink" => $this->getSeoLink(),

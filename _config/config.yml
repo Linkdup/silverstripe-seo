@@ -37,6 +37,18 @@ Page:
 SiteConfig:
   extensions:
     - SeoSiteConfigExtension
+    
+# Set the defult SEO rules
+SiteTree:
+  seo_rules:
+    - SeoValidatorRule_PageSubjectInUrl
+    - SeoValidatorRule_PageSubjectInTitle
+    - SeoValidatorRule_PageSubjectInMetaTitle      
+    - SeoValidatorRule_PageSubjectInMetaDescription
+    - SeoValidatorRule_PageTitleLength
+    - SeoValidatorRule_PageContentLength
+    - SeoValidatorRule_PageSubjectInFirstParagraph
+    - SeoValidatorRule_AltTitleInImages
 
 # Enable Google Sitemap notifications    
 ---

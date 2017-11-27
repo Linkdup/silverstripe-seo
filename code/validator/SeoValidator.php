@@ -28,14 +28,33 @@ class SeoValidator extends Object {
 	 * @var ArrayList 
 	 */
 	protected $tips = null;
+	
+	/**
+	 * Page to validate
+	 * 
+	 * @var SiteTree 
+	 */
+	protected $page = null;
+	
+	/**
+	 * Set the page DOM
+	 * 
+	 * @var DOMDocument 
+	 */
+	protected $dom = null;
 
 	/**
 	 * Initialise the class
+	 * 
+	 * @param SiteTree $page - page used to validate SEO
+	 * @param DOMDocument $dom - contains the dom of the SEO content
 	 */
-	public function __construct() {
+	public function __construct($page, $dom) {
 		parent::__construct();
 		$this->rules = new ArrayList();
 		$this->tips = new ArrayList();
+		$this->page = $page;
+		$this->dom = $dom;
 	}
 	
 	/**
@@ -43,7 +62,8 @@ class SeoValidator extends Object {
 	 * 
 	 * @param SeoValidatorRule $rule
 	 */
-	public function addRule(SeoValidatorRule $rule) {	
+	public function addRule(SeoValidatorRule $rule) {
+		$rule->setValidator($this);
 		$this->getRules()->add($rule);
 	}
 	
@@ -54,6 +74,24 @@ class SeoValidator extends Object {
 	 */
 	public function removeRule(SeoValidatorRule $rule) {
 		$this->getRules()->remove($rule);
+	}	
+	
+	/**
+	 * Get the page
+	 * 
+	 * @return SiteTree
+	 */
+	public function getPage() {
+		return $this->page;
+	}
+	
+	/**
+	 * Get the dom
+	 * 
+	 * @return DOMDocument
+	 */
+	public function getDom() {
+		return $this->dom;
 	}	
 	
 	/**
@@ -90,13 +128,16 @@ class SeoValidator extends Object {
 	 */
 	public function validate() {
 		$this->score = 0;
-		$x = 100/$this->getRules()->count();
-		foreach($this->getRules() as $rule) {
-			if($rule->valid()) {
-				$this->score += $x;
-				$this->tips->add(SeoValidatorResult::create(true, $rule->getTip()));
-			} else {
-				$this->tips->add(SeoValidatorResult::create(false, $rule->getTip()));
+		$rules = $this->getRules()->count();
+		if($rules > 0) {
+			$x = 100/$rules;
+			foreach($this->getRules() as $rule) {
+				if($rule->valid()) {
+					$this->score += $x;
+					$this->tips->add(SeoValidatorResult::create(true, $rule->getTip()));
+				} else {
+					$this->tips->add(SeoValidatorResult::create(false, $rule->getTip()));
+				}
 			}
 		}
 	}

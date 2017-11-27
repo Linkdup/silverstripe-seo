@@ -1,5 +1,5 @@
 <div id="seo_preview" class="seo-preview">
-	<h4>Google Preview</h4>
+	<h4>$Title</h4>
     <div class="seo-preview-container">
         <div class="seo-title">$SeoTitle</div>
         <div class="seo-link">$SeoLink</div>

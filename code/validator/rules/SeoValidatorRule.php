@@ -13,23 +13,39 @@ interface SeoValidatorRule {
 /**
  * Default structure of SEO validator rule
  */
-class SeoValidatorBase extends Object implements SeoValidatorRule {
+class SeoValidatorRuleBase extends Object implements SeoValidatorRule {
 	
 	/**
-	 * Initalise SEO validator
-	 * 
-	 * @param string $tip
-	 */
-	public function __construct($tip) {
-		$this->tip = $tip;
-	}
-	
-	/**
-	 * Message
+	 * Tip
 	 * 
 	 * @var string 
 	 */
 	protected $tip = "";
+	
+	/**
+	 * Reference to SEO validator
+	 * 
+	 * @var SeoValidator 
+	 */
+	protected $validator = null;
+	
+	/**
+	 * Set the validator
+	 * 
+	 * @param SeoValidator $validator
+	 */
+	public function setValidator($validator) {
+		$this->validator = $validator;
+	}
+	
+	/**
+	 * Get the validator
+	 * 
+	 * @param SeoValidator $validator
+	 */
+	public function getValidator() {
+		return $this->validator;
+	}	
 
 	/**
 	 * Get the tip
@@ -43,7 +59,7 @@ class SeoValidatorBase extends Object implements SeoValidatorRule {
 	 * 
 	 * @param string $tip
 	 */
-	public function setMessage($tip) {
+	public function setTip($tip) {
 		$this->tip = $tip;
 	}
 	
@@ -55,133 +71,18 @@ class SeoValidatorBase extends Object implements SeoValidatorRule {
 	public function valid() {
 		user_error("Needs to be implemented on rule", E_USER_ERROR);
 	}	
-}
-
-/**
- * Checks that the length of the text is within the excepted range.
- */
-class SeoValidatorRuleTextLength extends SeoValidatorBase {
 	
 	/**
-	 * Operator constants
-	 */
-	const OPERATOR_GREAT_THAN = "OPERATOR_GREAT_THAN";
-	const OPERATOR_GREAT_THAN_OR_EQUAL = "OPERATOR_GREAT_THAN_OR_EQUAL";
-	const OPERATOR_EQUAL = "OPERATOR_EQUAL";
-	const OPERATOR_LESS_THAN = "OPERATOR_LESS_THAN";
-	const OPERATOR_LESS_THAN_OR_EQUAL = "OPERATOR_LESS_THAN_OR_EQUAL";
-	
-	/**
-	 * Operator for validation
+	 * Helper method to check if all words are contained in subject
 	 * 
-	 * @var string 
-	 */
-	protected $operator;
-	
-	/**
-	 * Length of text
-	 * 
-	 * @var int
-	 */
-	protected $textLength;
-	
-	/**
-	 * Value to compare
-	 * 
-	 * @var int 
-	 */
-	protected $value;
-	
-	/**
-	 * @param string $tip
+	 * @param string $subject
 	 * @param string $text
-	 * @param string $operator
-	 * @param int $value
-	 */
-	public function __construct($tip, $text, $operator, $value) {
-		$this->operator = $operator;
-		$this->textLength = strlen($text);
-		$this->value = $value;
-		parent::__construct($tip);
-	}
-	
-	/**
-	 * Validate the rule
-	 * 
-	 * @return boolean
-	 */	
-	public function valid() {
-				
-		switch($this->operator) {
-			case self::OPERATOR_GREAT_THAN:
-				if($this->textLength > $this->value) {
-					return true;
-				} else {
-					return false;
-				}
-				break;
-			case self::OPERATOR_GREAT_THAN_OR_EQUAL:
-				if($this->textLength >= $this->value) {
-					return true;
-				} else {
-					return false;
-				}
-				break;
-			case self::OPERATOR_EQUAL:
-				if($this->textLength == $this->value) {
-					return true;
-				} else {
-					return false;
-				}
-				break;
-			case self::OPERATOR_LESS_THAN:
-				if($this->textLength < $this->value) {
-					return true;
-				} else {
-					return false;
-				}
-				break;		
-			case self::OPERATOR_LESS_THAN_OR_EQUAL:
-				if($this->textLength <= $this->value) {
-					return true;
-				} else {
-					return false;
-				}
-				break;				
-			default:
-				user_error("Please specify an operator", E_USER_WARNING);
-		}
-		return false;
-	}	
-}
-
-/**
- * Checks if the text contains all the words in the subject
- */
-class SeoValidatorRuleContainsAllWords extends SeoValidatorBase {
-	
-	protected $subject = "";
-	protected $text = "";
-
-	/**
-	 * @param type $subject
-	 * @param type $text
-	 */
-	public function __construct($tip, $subject, $text) {
-		$this->subject = $subject;
-		$this->text = $text;
-		parent::__construct($tip);
-	}
-	
-	/**
-	 * Validate the rule
-	 * 
 	 * @return boolean
 	 */
-	public function valid() {
-		if($this->subject) {
-			$words = explode(" ", strtolower($this->subject));
-			$text = strtolower($this->text);
+	public function containsAllWords($subject, $text) {
+		if(!empty($subject) && !empty($text)) {
+			$words = explode(" ", strtolower($subject));
+			$text = strtolower($text);
 			foreach($words as $word) {
 				if (!(strpos($text, $word) !== false)) {
 					return false;
@@ -189,33 +90,151 @@ class SeoValidatorRuleContainsAllWords extends SeoValidatorBase {
 			}
 			return true;
 		}
-		return false;
+		return false;	
+	}
+
+	
+}
+
+class SeoValidatorRule_PageSubjectInFirstParagraph extends SeoValidatorRuleBase {
+	
+	/**
+	 * @var string 
+	 */
+	protected $tip = "Page subject is not present in the first paragraph of the content of this page";	
+	
+	/**
+	 * Get first paragraph from content
+	 * 
+	 * @return string
+	 */
+	protected function getFirstParagrahFromContent() {
+		$dom = $this->validator->getDom();
+		$firstParagraphObject = $dom->getElementsByTagName('p')->item(0);
+		if($firstParagraphObject) {
+			return $firstParagraphObject->nodeValue;
+		}
+		return "";
 	}
 	
+	/**
+	 * @return boolean
+	 */
+	public function valid() {
+		$page = $this->validator->getPage();
+		$firstParagraph = $this->getFirstParagrahFromContent();	
+		return $this->containsAllWords($page->SEOPageSubject, $firstParagraph);
+	}
+}
+
+class SeoValidatorRule_PageSubjectInUrl extends SeoValidatorRuleBase {
+	/**
+	 * @var string 
+	 */
+	protected $tip = "Page subject is not present in the URL of this page";	
+		
+	
+	/**
+	 * @return boolean
+	 */
+	public function valid() {
+		$page = $this->validator->getPage();
+		return $this->containsAllWords($page->SEOPageSubject, $page->URLSegment);
+	}
+}
+
+class SeoValidatorRule_PageSubjectInTitle extends SeoValidatorRuleBase {
+	/**
+	 * @var string 
+	 */
+	protected $tip = "Page subject is not present in the  title of the page";	
+	
+	/**
+	 * @return boolean
+	 */
+	public function valid() {
+		$page = $this->validator->getPage();
+		return $this->containsAllWords($page->SEOPageSubject, $page->Title);
+	}
+}
+
+class SeoValidatorRule_PageSubjectInMetaTitle extends SeoValidatorRuleBase {
+	/**
+	 * @var string 
+	 */
+	protected $tip = "Page subject is not present in the meta title of the page";	
+		
+	/**
+	 * @return boolean
+	 */
+	public function valid() {
+		$page = $this->validator->getPage();
+		return $this->containsAllWords($page->SEOPageSubject, $page->MetaTitle);
+	}
+}
+
+class SeoValidatorRule_PageSubjectInMetaDescription extends SeoValidatorRuleBase {
+	/**
+	 * @var string 
+	 */
+	protected $tip = "Page subject is not present in the meta description of the page";	
+	
+	/**
+	 * @return boolean
+	 */
+	public function valid() {
+		$page = $this->validator->getPage();
+		return $this->containsAllWords($page->SEOPageSubject, $page->MetaDescription);
+	}
+}
+
+class SeoValidatorRule_PageTitleLength extends SeoValidatorRuleBase {
+	
+	/**
+	 * @var string 
+	 */
+	protected $tip = "The title of the page is not long enough and should have a length of at least 40 characters.";	
+	
+	/**
+	 * @return boolean
+	 */
+	public function valid() {
+		$page = $this->validator->getPage();
+		return (strlen( $page->Title) >= 40) ? true : false;
+	}
+}
+
+class SeoValidatorRule_PageContentLength extends SeoValidatorRuleBase {
+	
+	/**
+	 * @var string 
+	 */
+	protected $tip = "The content of this page is too short and does not have enough words. Please create content of at least 300 words based on the Page subject.";	
+
+	/**
+	 * @return boolean
+	 */
+	public function valid() {
+		$page = $this->validator->getPage();
+		return (strlen($page->Content) >= 300) ? true : false;
+	}
 }
 
 /**
  * Checks if a alt or title exists in images
  */
-class SeoValidatorRuleAltTitleInImages extends SeoValidatorBase {
+class SeoValidatorRule_AltTitleInImages extends SeoValidatorRuleBase {
 
 	/**
-	 * @param DOMDocument $dom
-	 */
-	public function __construct($dom) {
-		$this->dom = $dom;
-		parent::__construct("");
-	}
-	
-	/**
-	 * Validate the rule
-	 * 
 	 * @return boolean
 	 */
 	public function valid() {
-		$tags = $this->dom->getElementsByTagName("img");
+		$page = $this->validator->getPage();
+		$dom = $this->validator->getDom();
+
+		$tags = $dom->getElementsByTagName("img");
 		if($tags && $tags->length == 0) {
-			$this->setMessage("The content of this page does not have any images.");
+			$this->setTip("The content of this page does not have any images.");
 			return false;
 		}
 
@@ -231,7 +250,7 @@ class SeoValidatorRuleAltTitleInImages extends SeoValidatorBase {
 			}
 		}
 		if(count($images)) {
-			$tip = "Add title or alt tag to the following images " . implode(",", $images);
+			$this->setTip("Add title or alt tag to the following images " . implode(",", $images));
 			return false;
 		} else {
 			return true;
