@@ -12,7 +12,7 @@
 <% if $MetaDescription %><meta name="twitter:description" content="$MetaDescription.XML" /><% end_if %>
 <% if $SEOImage %>
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="$SEOImage.croppedImage(1200,630).AbsoluteLink">
+<meta name="twitter:image" content="$SEOImage.croppedImage(1200,675).AbsoluteLink">
 <% end_if %>
 <meta name="twitter:site" content="$TwitterSite" />
 <meta name="twitter:creator" content="$TwitterCreator" />
