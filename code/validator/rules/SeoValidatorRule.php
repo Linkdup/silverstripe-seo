@@ -241,7 +241,7 @@ class SeoValidatorRule_AltTitleInImages extends SeoValidatorRuleBase {
 		$images = array();
 		if($tags) {
 			foreach($tags as $tag) {
-				$src = $tag->getAttribute('alt'); 
+				$src = $tag->getAttribute('src'); 
 				$alt = $tag->getAttribute('alt'); 
 				$title = $tag->getAttribute('title'); 
 				if(empty($alt) && empty($title)) {
