@@ -47,7 +47,10 @@ SiteTree:
     - SeoValidatorRule_PageSubjectInMetaDescription
     - SeoValidatorRule_PageTitleLength
     - SeoValidatorRule_PageContentLength
+    - SeoValidatorRule_PageContentHasLinks
+    - SeoValidatorRule_PageContentHasSubtitles
     - SeoValidatorRule_PageSubjectInFirstParagraph
+    - SeoValidatorRule_PageSubjectInContent
     - SeoValidatorRule_AltTitleInImages
 
 # Enable Google Sitemap notifications    

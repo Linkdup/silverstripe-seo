@@ -127,6 +127,30 @@ class SeoValidatorRule_PageSubjectInFirstParagraph extends SeoValidatorRuleBase 
 	}
 }
 
+class SeoValidatorRule_PageSubjectInContent extends SeoValidatorRuleBase {
+	
+	/**
+	 * @var string 
+	 */
+	protected $tip = "Page subject is not present in the the content of this page";	
+	
+	/**
+	 * @return boolean
+	 */
+	public function valid() {
+		$page = $this->validator->getPage();
+		$content = "";
+		$dom = $this->validator->getDom();
+		$tags = $dom->getElementsByTagName("p");
+		if($tags && $tags->length > 0) {
+			foreach($tags as $tag) {
+				$content .= $tag->textContent;
+			}
+		}	
+		return $this->containsAllWords($page->SEOPageSubject, $content);
+	}
+}
+
 class SeoValidatorRule_PageSubjectInUrl extends SeoValidatorRuleBase {
 	/**
 	 * @var string 
@@ -215,8 +239,50 @@ class SeoValidatorRule_PageContentLength extends SeoValidatorRuleBase {
 	 * @return boolean
 	 */
 	public function valid() {
-		$page = $this->validator->getPage();
-		return (strlen($page->Content) >= 300) ? true : false;
+		$content = "";
+		$dom = $this->validator->getDom();
+		$tags = $dom->getElementsByTagName("p");
+		if($tags && $tags->length > 0) {
+			foreach($tags as $tag) {
+				$content .= $tag->textContent;
+			}
+		}
+		$words = explode(" ", $content);
+		return (count($words) >= 300) ? true : false;
+	}
+}
+
+class SeoValidatorRule_PageContentHasSubtitles extends SeoValidatorRuleBase {
+	
+	/**
+	 * @var string 
+	 */
+	protected $tip = "The content of this page does not have sub titles. Please add heading 2 elements";	
+
+	/**
+	 * @return boolean
+	 */
+	public function valid() {
+		$dom = $this->validator->getDom();
+		$tags = $dom->getElementsByTagName("h2");
+		return ($tags->length) ? true : false;
+	}
+}
+
+class SeoValidatorRule_PageContentHasLinks extends SeoValidatorRuleBase {
+	
+	/**
+	 * @var string 
+	 */
+	protected $tip = "The content of this page does not have any links.";	
+
+	/**
+	 * @return boolean
+	 */
+	public function valid() {
+		$dom = $this->validator->getDom();
+		$tags = $dom->getElementsByTagName("a");
+		return ($tags->length) ? true : false;
 	}
 }
 
