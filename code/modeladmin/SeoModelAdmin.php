@@ -96,6 +96,7 @@ class SeoModelAdmin extends ModelAdmin {
 		$dataColumns->setDisplayFields(array(
 			'Title' => 'Title',
 			'URLSegment'=> 'URL',
+			'SEOPageSubject' => 'SEO Page Subject',
 			'SEOPageScore' => 'SEO Score'
 		));
 
