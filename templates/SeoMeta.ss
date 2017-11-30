@@ -1,3 +1,5 @@
+<link rel="canonical" href="$CanonicalLink" />
+
 <meta property="og:locale" content="$Locale"/>
 <meta name="Copyright" content="{$Date.Now} {$SiteConfig.Title}" />
 

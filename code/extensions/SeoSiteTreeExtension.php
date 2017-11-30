@@ -34,7 +34,8 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
     private static $db = [
         'MetaTitle' => 'Varchar(255)',
         'SEOPageSubject' => 'Varchar(255)',
-        'SEOPageScore' => 'Int'
+        'SEOPageScore' => 'Int',
+		'CanonicalURL' => 'Varchar(255)'
     ];	
 	
     /**
@@ -93,6 +94,7 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
         $fields->findOrMakeTab('Root.SEO.Options.Meta', _t('SEO.Meta', 'Meta'));
 		$fields->findOrMakeTab('Root.SEO.Options.SocialMedia', _t('SEO.SocialMedia', 'Social Media'));
         $fields->findOrMakeTab('Root.SEO.Options.Preview', _t('SEO.Preview', 'Preview'));
+		$fields->findOrMakeTab('Root.SEO.Options.Advanced', _t('SEO.Advanced', 'Advanced'));
 		
 		// Add tips field
 		$fields->addFieldsToTab('Root.SEO.Options.Tips', array(
@@ -105,13 +107,21 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 		// Add SEO meta fields
 		$fields->addFieldsToTab('Root.SEO.Options.Meta', array(
 			TextField::create("MetaTitle", _t('SEO.MetaTitle', 'Meta Title')),
-			TextareaField::create("MetaDescription",  _t('SEO.MetaDescription', 'Meta Description'))
+			TextareaField::create("MetaDescription",  _t('SEO.MetaDescription', 'Meta Description')),
+			TextareaField::create("ExtraMeta", _t('SEO.ExtraMeta', 'Extra Metadata'))
+				->setDescription(_t('SEO.ExtraMetaDescription','HTML tags for additional meta information. For example &lt;meta name=\"customName\" content=\"your custom content here\" /&gt;'))
 		));
 		
-		// Add SEO meta fields
+		// Add SEO social media fields
 		$fields->addFieldsToTab('Root.SEO.Options.SocialMedia', array(
 			UploadField::create("SocialMediaShareImage", _t('SEO.SocialMediaShareImage', 'Social Media Default Image'))
 			->setDescription(_t('SEO.SocialMediaShareImageDescription', 'Images size 1200 x 675'))
+		));
+		
+		// 
+		$fields->addFieldsToTab('Root.SEO.Options.Advanced', array(
+			TextField::create("CanonicalURL", _t('SEO.CanonicalURL', 'Canonical URL'))
+			->setDescription(_t('SEO.CanonicalURLDescription', 'The Canonical URL that this page should point to.'))
 		));
 		
 		// Add preview fields
@@ -136,6 +146,30 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
     }
 	
 	/**
+	 * If the page has a CanonicalLink return it
+	 * 
+	 * @return string
+	 */
+	public function CanonicalLink(){	
+		$url = $this->owner->AbsoluteLink();
+			
+		if($this->owner->URLSegment === "Security") {
+			$controller = Controller::curr();
+			$action = $controller->Action;
+			$url = $this->owner->AbsoluteLink($action);
+		}
+		
+		$this->owner->extend('updateCanonicalLink', $url);
+		
+		// Override on page level
+		if(!empty($this->owner->CanonicalURL)) {
+			$url = $this->owner->CanonicalURL;
+		}
+		
+		return $url;
+	}
+	
+	/**
 	 * Create DOM from HTML
 	 *
 	 * @param HTMLText $html String
@@ -143,16 +177,14 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 	 */
 	private function createDOMDocumentFromHTML($html) 
 	{
-		if (empty($html)) {
-			return null;
-		} else {
-			libxml_use_internal_errors(true);
-			$dom = new DOMDocument;
+		libxml_use_internal_errors(true);
+		$dom = new DOMDocument();
+		if (!empty($html)) {
 			$dom->loadHTML($html);
-			libxml_clear_errors();
-			libxml_use_internal_errors(false);
-			return $dom;
 		}
+		libxml_clear_errors();
+		libxml_use_internal_errors(false);
+		return $dom;
 	}
 	
 	/**
