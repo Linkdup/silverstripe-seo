@@ -35,8 +35,10 @@ class SeoController extends Controller {
 		// Get the content array
 		$content = $this->request->postVar("content");
 		
-		if($pageID > 0) {
-			$page = Page::get()->byID($pageID);
+		// Get the page
+		$page = Versioned::get_latest_version('SiteTree', $pageID);
+		
+		if($page) {
 
 			// Update the fields required for SEO validator, we need to inject
 			// the content from the front-end.
