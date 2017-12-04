@@ -106,8 +106,10 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 		
 		// Add SEO meta fields
 		$fields->addFieldsToTab('Root.SEO.Options.Meta', array(
-			TextField::create("MetaTitle", _t('SEO.MetaTitle', 'Meta Title')),
-			TextareaField::create("MetaDescription",  _t('SEO.MetaDescription', 'Meta Description')),
+			TextField::create("MetaTitle", _t('SEO.MetaTitle', 'Meta Title'))
+				->setMaxLength(70),
+			TextareaField::create("MetaDescription",  _t('SEO.MetaDescription', 'Meta Description'))
+				->setAttribute("maxlength", 160),
 			TextareaField::create("ExtraMeta", _t('SEO.ExtraMeta', 'Extra Metadata'))
 				->setDescription(_t('SEO.ExtraMetaDescription','HTML tags for additional meta information. For example &lt;meta name=\"customName\" content=\"your custom content here\" /&gt;'))
 		));
