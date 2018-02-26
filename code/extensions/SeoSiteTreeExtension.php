@@ -23,7 +23,7 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 	 * @config
 	 * @var array
 	 */
-	private static $excluded_page_types = [];
+	private static $excluded_page_types = array();
 
     /**
      * Database fields
@@ -31,7 +31,7 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
      * @config
 	 * @var array
      **/
-    private static $db = [
+    private static $db = array(
         'MetaTitle' => 'Varchar(255)',
 		'ExtraMeta' => 'Text',
         'SEOPageSubject' => 'Varchar(255)',
@@ -39,7 +39,7 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 		'CanonicalURL' => 'Varchar(255)',
 		'TwitterSite' => 'Varchar(255)',
 		'TwitterCreator' => 'Varchar(255)'
-    ];	
+    );	
 	
     /**
      * Database default fields
@@ -47,9 +47,9 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
      * @config
 	 * @var array
      **/
-    private static $defaults = [
+    private static $defaults = array(
         'SEOPageScore' => 0
-    ];
+    );
 	
     /**
      * Database has one relationships
@@ -57,9 +57,9 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
      * @config
 	 * @var array 
      **/
-    private static $has_one = [
+    private static $has_one = array(
         'SocialMediaShareImage' => 'Image'
-    ];
+    );
 	
 	/**
 	 * Save the SEO page score on write

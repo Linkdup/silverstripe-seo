@@ -46,7 +46,7 @@ class SeoModelAdmin extends ModelAdmin {
 	 * @config
 	 * @var array|string
      **/
-    private static $managed_models = [];
+    private static $managed_models = array();
 
     /**
      * Disable model imports in SEO admin
