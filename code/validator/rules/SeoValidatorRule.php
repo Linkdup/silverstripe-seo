@@ -81,11 +81,11 @@ class SeoValidatorRuleBase extends Object implements SeoValidatorRule {
 	 */
 	public function containsAllWords($subject, $text) {
 		if(!empty($subject) && !empty($text)) {
-			$subject = preg_replace('/[.,]/', '', $subject);
-			$words = explode(" ", strtolower($subject));
+			$subject = preg_replace('/[.,]/', '', trim($subject));
+			$words = explode(" ", strtolower(trim($subject)));
 			$text = strtolower($text);
 			foreach($words as $word) {
-				if (!(strpos($text, $word) !== false)) {
+				if (!(strpos($text, trim($word)) !== false)) {
 					return false;
 				}
 			}
