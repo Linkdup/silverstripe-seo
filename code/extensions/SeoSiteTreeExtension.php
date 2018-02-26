@@ -33,9 +33,12 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
      **/
     private static $db = [
         'MetaTitle' => 'Varchar(255)',
+		'ExtraMeta' => 'Text',
         'SEOPageSubject' => 'Varchar(255)',
         'SEOPageScore' => 'Int',
-		'CanonicalURL' => 'Varchar(255)'
+		'CanonicalURL' => 'Varchar(255)',
+		'TwitterSite' => 'Varchar(255)',
+		'TwitterCreator' => 'Varchar(255)'
     ];	
 	
     /**
@@ -116,6 +119,8 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 		
 		// Add SEO social media fields
 		$fields->addFieldsToTab('Root.SEO.Options.SocialMedia', array(
+			TextField::create("TwitterSite","Twitter Site"),
+			TextField::create("TwitterCreator","Twitter Creator"),
 			UploadField::create("SocialMediaShareImage", _t('SEO.SocialMediaShareImage', 'Social Media Default Image'))
 			->setDescription(_t('SEO.SocialMediaShareImageDescription', 'Images size 1200 x 675'))
 		));
@@ -229,10 +234,15 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 	*/
 	public function getSeoHTML() 
 	{
-		Config::inst()->update('SSViewer', 'theme_enabled', true);
-		$rendered_layout = $this->renderLayout();
-		Config::inst()->update('SSViewer', 'theme_enabled', false);
-		return $rendered_layout;
+		try{
+			Config::inst()->update('SSViewer', 'theme_enabled', true);
+			$rendered_layout = $this->renderLayout();
+			Config::inst()->update('SSViewer', 'theme_enabled', false);
+			return $rendered_layout;
+		} catch (Exception $ex) {
+			SS_Log::log("SeoSiteTreeExtension::getSeoHTML error" . $ex->getMessage(), SS_Log::NOTICE);
+		}
+		return "<p>&nbsp;</p>";
 	}
 	
 	/**
@@ -270,4 +280,106 @@ class SeoSiteTreeExtension extends SiteTreeExtension {
 		return $templates['Layout'];
 	}
 	
+	/**
+	 * Get SEO title for the page
+	 * 
+	 * @return string
+	 */
+	public function getSeoTitle() {
+		$value = $this->owner->Title;
+		if(!empty($this->owner->MetaTitle)) {
+			$value = $this->owner->MetaTitle;
+		}
+		return $value;
+	}
+	
+	/**
+	 * Get SEO description for page
+	 * 
+	 * @return string
+	 */
+	public function getSeoDescription() {
+		$value = $this->owner->MetaDescription;
+		if(empty($value)) {
+			$value = $this->owner->obj("Content")->LimitCharacters(255);
+		}
+		return $value;
+	}
+	
+	/**
+	 * Get SEO link for the page
+	 * 
+	 * @return string
+	 */
+	public function getSeoLink() {
+		$value = $this->owner->AbsoluteLink();
+		return $value;
+	}
+	
+	/**
+	 * Get SEO image
+	 * 
+	 * @return Image
+	 */
+	public function getSeoImage() {
+		$image = $this->owner->obj("SocialMediaShareImage");
+		if($image && $image->ID === 0) {
+			$config = SiteConfig::current_site_config();
+			if($config) {
+				$image = $config->obj("SocialMediaShareImage");
+			}
+		}
+		
+		return $image;
+	}
+	
+	/**
+	 * Get SEO site name
+	 * 
+	 * @return string
+	 */
+	public function getSeoSiteName() {
+		$value = "";
+		$config = SiteConfig::current_site_config();
+		if($config) {
+			$value = $config->Title . " " . $config->Tagline;
+		}
+		
+		return $value;
+	}
+	
+	/**
+	 * Get SEO twitter site
+	 * 
+	 * @return string
+	 */
+	public function getSeoTwitterSite() {
+		$value = $this->owner->TwitterSite;
+		
+		if(empty($value)) {
+			$config = SiteConfig::current_site_config();
+			if($config) {
+				$value = $config->TwitterSite;
+			}
+		}
+		
+		return $value;
+	}
+	
+	/**
+	 * Get SEO twitter creator
+	 * 
+	 * @return string
+	 */
+	public function getSeoTwitterCreator() {
+		$value = $this->owner->TwitterCreator;
+		if(empty($value)) {
+			$config = SiteConfig::current_site_config();
+			if($config) {
+				$value = $config->TwitterCreator;
+			}
+		}
+		return $value;
+	}
+
 }
