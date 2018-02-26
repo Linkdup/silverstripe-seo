@@ -9,29 +9,41 @@
  */
 class SeoSiteConfigExtension extends DataExtension
 {
+    /**
+     * Database fields
+     *
+     * @config
+	 * @var array
+     **/	
     private static $db = array(
-        'GoogleWebmasterMetaTag' => 'Varchar(512)'
+		'TwitterSite' => 'Varchar(255)',
+		'TwitterCreator' => 'Varchar(255)'
     );
+	
+	/**
+	 * Database has one relationship
+	 *
+	 * @return array
+	 */
+	private static $has_one = array(
+		'SocialMediaShareImage' => 'Image'
+	);	
 
     /**
-     * updateCMSFields.
      * Update Silverstripe CMS Fields for SEO Module
      *
      * @param FieldList
      */
     public function updateCMSFields(FieldList $fields)
-    {
-        if (Config::inst()->get('SeoSiteTreeExtension', 'use_webmaster_tag')) {
-            $fields->addFieldToTab(
-                "Root.SEO",
-                TextareaField::create(
-                    "GoogleWebmasterMetaTag",
-                    _t('SEO.SEOGoogleWebmasterMetaTag', 'Google webmaster meta tag')
-                )->setRightTitle(_t(
-                    'SEO.SEOGoogleWebmasterMetaTagRightTitle',
-                    "Full Google webmaster meta tag For example &lt;meta name=\"google-site-verification\" content=\"hjhjhJHG12736JHGdfsdf\" /&gt;"
-                ))
-            );
-        }
+    {	
+		$fields->addFieldsToTab("Root.SEO", array(
+			UploadField::create("SocialMediaShareImage","Default share image"),
+			TextField::create("TwitterSite","Twitter Site"),
+			TextField::create("TwitterCreator","Twitter Creator"),
+			UploadField::create(
+				"SocialMediaShareImage",
+				"Default share image"
+			)
+		));	
     }
 }
