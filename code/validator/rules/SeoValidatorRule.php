@@ -13,7 +13,7 @@ interface SeoValidatorRule {
 /**
  * Default structure of SEO validator rule
  */
-class SeoValidatorRuleBase extends Object implements SeoValidatorRule {
+class SeoValidatorRuleBase extends SS_Object implements SeoValidatorRule {
 	
 	/**
 	 * Tip
