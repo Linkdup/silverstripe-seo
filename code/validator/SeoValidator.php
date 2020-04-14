@@ -6,7 +6,7 @@
  * @package seo
  */
 
-class SeoValidator extends Object {
+class SeoValidator extends SS_Object {
 	
 	/**
 	 * Get score
